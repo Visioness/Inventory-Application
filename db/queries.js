@@ -1,6 +1,6 @@
 const pool = require('./pool');
 
-async function getAllInventory() {
+async function getAllGames() {
   const { rows } = await pool.query(
     `
       SELECT * FROM games;
@@ -10,7 +10,7 @@ async function getAllInventory() {
   return rows;
 }
 
-async function getByCategories(categories) {
+async function getGamesByCategories(categories) {
   const categoryChecks = categories.map((category, index) => {
     if (index === 0) {
       return `category_id = $${index + 1}`;
@@ -35,7 +35,7 @@ async function getByCategories(categories) {
   return rows;
 }
 
-async function getByItemId(id) {
+async function getGameById(id) {
   const { rows } = pool.query(
     `
       SELECT * FROM games
@@ -66,3 +66,11 @@ async function createItem(name, description, price) {
     [name, description, price]
   );
 }
+
+module.exports = {
+  getAllGames,
+  getGamesByCategories,
+  getGameById,
+  createCategory,
+  createItem,
+};
