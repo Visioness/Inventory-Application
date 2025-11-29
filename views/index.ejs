@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+  </head>
+  <body>
+    <h1><%= title %></h1>
+
+    <aside class="sidebar">
+      <% if (locals.categories) { %>
+        <section>
+          <h2>Categories</h2>
+          <% if (categories.length > 0) { %>
+            <form action="/" method="GET" class="categories-form">
+              <div class="categories">
+                <% categories.forEach((category, index) => { %>
+                  <label for="category-<%= index %>" class="category">
+                    <input 
+                      type="checkbox" 
+                      class="name" 
+                      name="category" 
+                      id="category-<%= index %>" 
+                      value="<%= category.name %>"
+                      <% if (locals.filters?.includes(category.name)) { %>
+                        checked
+                      <% } %>
+                      >
+                    <%= category.name %>
+                  </label>
+                <% }) %>
+              </div>
+
+              <button type="submit">Filter</button>
+            </form>
+            <a href="/">
+              <button type="button">Clear Filter</button>
+            </a>
+          <% } else { %>
+            <span>Could not find any category.</span>
+          <% } %>
+        </section>
+      <% } %>
+    </aside>
+
+    <main>
+      <h2><%= subtitle %></h2>
+      <% if (locals.games) { %>
+        <section>
+          <% if (games.length > 0) { %> 
+            <ul class="games">
+              <% games.forEach(game => { %>
+                <li class="game">
+                  <span class="name">
+                    <%= game.name %>
+                  </span>
+                </li>
+              <% }) %>
+            </ul>
+          <% } else { %>
+            <span>Could not find any game with given categories.</span>
+          <% } %>
+        </section> 
+      <% } %>
+  
+      <% if (locals.errors) { %>
+        <section>
+          <%- include('partials/errors') %>
+        </section>
+      <% } %>
+    </main>
+  </body>
+</html>
