@@ -75,31 +75,80 @@ const SQL = `
 
   INSERT INTO game_categories (game_id, category_id)
   VALUES
-    (1, 1), (1, 2), (1, 7), (1, 13), (1, 16),
-    (2, 10), (2, 2), (2, 7), (2, 1), (2, 16),
+    -- 1. Zelda: BotW (Action, Adventure, Open World, Single Player, Third Person)
+    (1, 1), (1, 2), (1, 6), (1, 13), (1, 16),
+    
+    -- 2. Witcher 3 (RPG, Adventure, Open World, Action, Third Person)
+    (2, 10), (2, 2), (2, 6), (2, 1), (2, 16),
+    
+    -- 3. GTA V (Action, Adventure, Multi Player, Shooter, Third Person, Open World)
     (3, 1), (3, 2), (3, 7), (3, 11), (3, 16), (3, 6),
+    
+    -- 4. Elden Ring (RPG, Action, Multi Player, Adventure, Third Person, Open World)
     (4, 10), (4, 1), (4, 7), (4, 2), (4, 16), (4, 6),
+    
+    -- 5. RDR2 (Action, Adventure, Multi Player, Shooter, Third Person, Open World)
     (5, 1), (5, 2), (5, 7), (5, 11), (5, 16), (5, 6),
+    
+    -- 6. Mario Odyssey (Platform, Action, Adventure, Single Player)
     (6, 8), (6, 1), (6, 2), (6, 13),
+    
+    -- 7. Minecraft (Simulation, Adventure, Multi Player, Single Player, Open World)
     (7, 12), (7, 2), (7, 7), (7, 13), (7, 6),
-    (8, 8), (8, 2), (8, 5), (8, 13), (8, 6),
-    (9, 11), (9, 1), (9, 5), (9, 4), (9, 6),
-    (10, 14), (10, 12), (10, 13), (10, 6),
-    (11, 12), (11, 10), (11, 13), (11, 6),
-    (12, 1), (12, 13),
+    
+    -- 8. Portal 2 (Platform, Adventure, First Person, Single Player, Multi Player)
+    (8, 8), (8, 2), (8, 5), (8, 13), (8, 7),
+    
+    -- 9. COD MW2 (Shooter, Action, First Person, Battle Royal, Multi Player, Single Player)
+    (9, 11), (9, 1), (9, 5), (9, 4), (9, 7), (9, 13),
+    
+    -- 10. FIFA 23 (Sports, Simulation, Single Player, Multi Player)
+    (10, 14), (10, 12), (10, 13), (10, 7),
+    
+    -- 11. Stardew Valley (Simulation, RPG, Single Player, Multi Player)
+    (11, 12), (11, 10), (11, 13), (11, 7),
+    
+    -- 12. Hades (Action, Single Player, RPG)
+    (12, 1), (12, 13), (12, 10),
+    
+    -- 13. TLOU Part I (Action, Adventure, Single Player, Third Person)
     (13, 1), (13, 2), (13, 13), (13, 16),
+    
+    -- 14. GOW Ragnarök (Action, Adventure, Single Player, Third Person)
     (14, 1), (14, 2), (14, 13), (14, 16),
-    (15, 15), (15, 13), (15, 6),
-    (16, 1), (16, 3), (16, 6), (16, 13),
+    
+    -- 15. Civ VI (Strategy, Single Player, Multi Player)
+    (15, 15), (15, 13), (15, 7),
+    
+    -- 16. SF6 (Action, Arcade, Multi Player, Single Player)
+    (16, 1), (16, 3), (16, 7), (16, 13),
+    
+    -- 17. Forza Horizon 5 (Racing, Multi Player, Open World, Single Player)
     (17, 9), (17, 7), (17, 6), (17, 13),
-    (18, 3), (18, 13),
-    (19, 6), (19, 15),
-    (20, 11), (20, 5), (20, 6), (20, 1),
+    
+    -- 18. Tetris Effect (Arcade, Single Player, Multi Player)
+    (18, 3), (18, 13), (18, 7),
+    
+    -- 19. Among Us (Strategy, Multi Player) - Removed Open World(6)
+    (19, 15), (19, 7),
+    
+    -- 20. Overwatch 2 (Shooter, First Person, Action, Multi Player)
+    (20, 11), (20, 5), (20, 1), (20, 7),
+    
+    -- 21. Hollow Knight (Action, Adventure, Platform, Single Player)
     (21, 1), (21, 2), (21, 8), (21, 13),
+    
+    -- 22. FF7 Remake (RPG, Action, Single Player, Third Person)
     (22, 10), (22, 1), (22, 13), (22, 16),
-    (23, 10), (23, 7), (23, 5), (23, 1), (23, 13),
+    
+    -- 23. Cyberpunk 2077 (RPG, First Person, Action, Single Player, Open World)
+    (23, 10), (23, 5), (23, 1), (23, 13), (23, 6),
+    
+    -- 24. RE4 (Action, Adventure, Single Player, Third Person)
     (24, 1), (24, 2), (24, 13), (24, 16),
-    (25, 14), (25, 9), (25, 6), (25, 1);
+    
+    -- 25. Rocket League (Sports, Racing, Action, Multi Player)
+    (25, 14), (25, 9), (25, 1), (25, 7);
 `;
 
 async function main() {

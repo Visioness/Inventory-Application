@@ -11,20 +11,25 @@ async function getAllGames() {
 }
 
 async function getGamesByCategories(categories) {
-  const categoryChecks = categories.map((category, index) => {
-    if (index === 0) {
-      return `category_id = $${index + 1}`;
-    }
+  const categoryChecks = categories
+    .map((category, index) => {
+      if (index === 0) {
+        return `name = $${index + 1}`;
+      }
 
-    return `OR category_id = $${index + 1}`;
-  });
+      return `OR name = $${index + 1}`;
+    })
+    .join(' ');
 
   const { rows } = await pool.query(
     `
       SELECT * FROM games
       WHERE id IN (
         SELECT game_id FROM game_categories
-        WHERE ${categoryChecks}
+        WHERE category_id IN (
+          SELECT id FROM categories
+          WHERE ${categoryChecks}
+        )
         GROUP BY (game_id)
         HAVING COUNT(category_id) = ${categories.length}
       );
@@ -36,12 +41,34 @@ async function getGamesByCategories(categories) {
 }
 
 async function getGameById(id) {
-  const { rows } = pool.query(
+  const { rows } = await pool.query(
     `
       SELECT * FROM games
       WHERE id = $1;  
     `,
     [id]
+  );
+
+  return rows[0];
+}
+
+async function getAllCategories() {
+  const { rows } = await pool.query(
+    `
+      SELECT * FROM categories    
+    `
+  );
+
+  return rows;
+}
+
+async function getCategory(name) {
+  const { rows } = await pool.query(
+    `
+      SELECT * FROM categories
+      WHERE name = $1
+    `,
+    [name]
   );
 
   return rows[0];
@@ -71,6 +98,8 @@ module.exports = {
   getAllGames,
   getGamesByCategories,
   getGameById,
+  getAllCategories,
+  getCategory,
   createCategory,
   createItem,
 };
