@@ -13,33 +13,64 @@
         <section>
           <h2>Categories</h2>
           <% if (categories.length > 0) { %>
-            <form action="/" method="GET" class="categories-form">
+            <form action="/" method="GET" id="category-filter">
               <div class="categories">
-                <% categories.forEach((category, index) => { %>
-                  <label for="category-<%= index %>" class="category">
-                    <input 
-                      type="checkbox" 
-                      class="name" 
-                      name="category" 
-                      id="category-<%= index %>" 
-                      value="<%= category.name %>"
-                      <% if (locals.filters?.includes(category.name)) { %>
-                        checked
-                      <% } %>
-                      >
-                    <%= category.name %>
-                  </label>
+                <% categories.forEach(category => { %>
+                  <div class="category" data-id="<%= category.id %>">
+                    <label for="category-input-<%= category.id %>" class="label">
+                      <input 
+                        type="checkbox" 
+                        name="category" 
+                        id="category-input-<%= category.id %>" 
+                        value="<%= category.name %>"
+                        <% if (locals.filters?.includes(category.name)) { %>
+                          checked
+                        <% } %>
+                      />
+                      <span class="name">
+                        <%= category.name %>
+                      </span>
+                    </label>
+  
+                    <div hidden class="edit-container">
+                      <input type="text" class="inline-edit-input" value="<%= category.name %>" placeholder="Category Name" required/>
+                      <button type="button" class="btn-save">✔</button>
+                      <button type="button" class="btn-cancel">✖</button>
+                    </div>
+                    
+                    <div class="actions">
+                      <button type="button" class="btn-edit">Edit</button>
+                      <button type="button" class="btn-delete">Delete</button>
+                    </div>
+                  </div>
                 <% }) %>
               </div>
-
-              <button type="submit">Filter</button>
             </form>
+          <% } else { %>
+            <span>Could not find any category. Be first to add a new category.</span>
+          <% } %>
+
+          <div hidden class="category" id="new-category-row">
+            <div class="add-container">
+              <input type="text" class="inline-add-input" placeholder="Category Name" required/>
+              <button type="button" class="btn-save">✔</button>
+              <button type="button" class="btn-cancel">✖</button>
+            </div>
+            <button type="button" class="btn-add">Add New Category</button>
+          </div>
+
+          <% if (locals.categoryErrors) { %>
+            <section>
+              <%- include('partials/categoryErrors') %>
+            </section>
+          <% } %>
+
+          <div class="filter-actions">
+            <button type="submit" form="category-filter">Filter</button>
             <a href="/">
               <button type="button">Clear Filter</button>
             </a>
-          <% } else { %>
-            <span>Could not find any category.</span>
-          <% } %>
+          </div>
         </section>
       <% } %>
     </aside>
@@ -58,17 +89,213 @@
                 </li>
               <% }) %>
             </ul>
-          <% } else { %>
+          <% } else if (locals.categories?.length > 0) { %>
             <span>Could not find any game with given categories.</span>
+          <% } else { %>
+            <span>Could not find any game. Be first to add a new game.</span>
+          <% } %>
+          
+          <% if (locals.gameErrors) { %>
+            <section>
+              <%- include('partials/gameErrors') %>
+            </section>
           <% } %>
         </section> 
       <% } %>
   
-      <% if (locals.errors) { %>
-        <section>
-          <%- include('partials/errors') %>
-        </section>
-      <% } %>
     </main>
+
+    <div hidden class="category-forms">
+      <form id="category-add" action="/categories/new" method="POST">
+        <input hidden type="text" name="name" required />
+      </form>
+
+      <form hidden id="category-update" action="/categories/categoryId/update" method="POST">
+        <input hidden type="text" name="name" required />
+      </form>
+    </div>
+
+    <dialog id="delete-dialog">
+      <form method="dialog">
+        <h3>Admin Access Required</h3>
+        <p>Please enter the admin password to delete this category.</p>
+        <input type="password" id="dialog-password-input"/>
+        <div class="dialog-actions">
+          <button value="cancel">Cancel</button>
+          <button id="confirm-delete-btn" type="button">Delete</button>
+        </div>
+        <p id="dialog-error-msg"></p>
+      </form>
+    </dialog>
+    
+    <script>
+      const categories = document.querySelectorAll('.category');
+      const newCategoryRow = document.getElementById('new-category-row');
+      const btnAdd = document.querySelector('.btn-add');
+      
+      // Dialog elements
+      const deleteDialog = document.getElementById('delete-dialog');
+      const dialogPasswordInput = document.getElementById('dialog-password-input');
+      const dialogErrorMsg = document.getElementById('dialog-error-msg');
+      const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+      
+      // Form elements
+      const categoryAddForm = document.getElementById('category-add');
+      const categoryUpdateForm = document.getElementById('category-update');
+      const addInput = document.querySelector('#new-category-row .inline-add-input');
+      
+      // State
+      let pendingDeleteId = null;
+      
+      function handleKeys(e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          const category = e.target.closest('.category');
+          const saveBtn = category.querySelector('.btn-save');
+          saveBtn.click();
+        } else if (e.key === 'Escape') {
+          e.preventDefault();
+          const category = e.target.closest('.category');
+          const cancelBtn = category.querySelector('.btn-cancel');
+          cancelBtn.click();
+        }
+      }
+      
+      function showError(message) {
+        dialogErrorMsg.textContent = message;
+        dialogErrorMsg.style.display = 'block';
+      }
+      
+      function hideError() {
+        dialogErrorMsg.style.display = 'none';
+      }
+      
+      function handleAddButton() {
+        newCategoryRow.hidden = false;
+        addInput.focus();
+        btnAdd.hidden = true;
+      }
+      
+      function handleEditButton(category) {
+        const categoryName = category.querySelector('.name');
+        const categoryInput = category.querySelector('.inline-edit-input');
+        const editContainer = category.querySelector('.edit-container');
+        const editBtn = category.querySelector('.btn-edit');
+        
+        categoryName.hidden = true;
+        editContainer.hidden = false;
+        editBtn.hidden = true;
+        categoryInput.focus();
+      }
+      
+      function handleSaveButton(category, isNewCategory, categoryId) {
+        if (isNewCategory) {
+          const addInputValue = category.querySelector('.inline-add-input').value;
+          const addFormInput = categoryAddForm.querySelector('input');
+          
+          addFormInput.value = addInputValue;
+          categoryAddForm.submit();
+        } else {
+          const categoryInput = category.querySelector('.inline-edit-input');
+          const updateFormInput = categoryUpdateForm.querySelector('input');
+          
+          categoryUpdateForm.action = `/categories/${categoryId}/update`;
+          updateFormInput.value = categoryInput.value;
+          categoryUpdateForm.submit();
+        }
+      }
+      
+      function handleCancelButton(category, isNewCategory) {
+        if (isNewCategory) {
+          category.hidden = true;
+          btnAdd.hidden = false;
+          category.querySelector('.inline-add-input').value = '';
+        } else {
+          const categoryName = category.querySelector('.name');
+          const editContainer = category.querySelector('.edit-container');
+          const editBtn = category.querySelector('.btn-edit');
+          
+          categoryName.hidden = false;
+          editContainer.hidden = true;
+          editBtn.hidden = false;
+        }
+      }
+      
+      function handleDeleteButton(categoryId) {
+        pendingDeleteId = categoryId;
+        dialogPasswordInput.value = '';
+        hideError();
+        deleteDialog.showModal();
+      }
+      
+      async function handleConfirmDelete() {
+        const password = dialogPasswordInput.value;
+        
+        try {
+          const response = await fetch(`/categories/${pendingDeleteId}/delete`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ password })
+          });
+          
+          if (response.ok) {
+            window.location.reload();
+          } else {
+            const data = await response.json();
+            showError(data.errors[0].msg);
+          }
+        } catch (err) {
+          console.error('Error: ', err);
+          showError('Server Error');
+        }
+      }
+      
+      // Enter key handling for all edit inputs
+      document.querySelectorAll('.inline-edit-input').forEach(input => {
+        input.addEventListener('keydown', handleKeys);
+      });
+      
+      // Enter key handling for add input
+      addInput.addEventListener('keydown', handleKeys);
+
+      // Handle Enter key in delete dialog password input
+      dialogPasswordInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          confirmDeleteBtn.click();
+        }
+      });
+      
+      // Confirm delete button
+      confirmDeleteBtn.addEventListener('click', handleConfirmDelete);
+      
+      // Main click event delegation
+      document.addEventListener('click', (e) => {
+        // Handle add button
+        if (e.target.classList.contains('btn-add')) {
+          handleAddButton();
+          return;
+        }
+        
+        const category = e.target.closest('.category');
+        if (!category) return;
+        
+        const isNewCategory = category.id === 'new-category-row';
+        const categoryId = category.dataset.id;
+        
+        // Route to appropriate handler based on button clicked
+        if (e.target.classList.contains('btn-edit')) {
+          handleEditButton(category);
+        } else if (e.target.classList.contains('btn-save')) {
+          handleSaveButton(category, isNewCategory, categoryId);
+        } else if (e.target.classList.contains('btn-cancel')) {
+          handleCancelButton(category, isNewCategory);
+        } else if (e.target.classList.contains('btn-delete')) {
+          handleDeleteButton(categoryId);
+        }
+      });
+    </script>
   </body>
 </html>

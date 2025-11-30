@@ -1,0 +1,11 @@
+<% if (categoryErrors.length > 0) { %>
+  <ul class="errors">
+    <% categoryErrors.forEach(categoryError => { %>
+      <li class="error">
+        <p class="message">
+          <%= categoryError.msg %>
+        </p>
+      </li>
+    <% }) %>
+  </ul>
+<% } %>

@@ -3,7 +3,8 @@ const pool = require('./pool');
 async function getAllGames() {
   const { rows } = await pool.query(
     `
-      SELECT * FROM games;
+      SELECT * FROM games
+      ORDER BY name;
     `
   );
 
@@ -55,7 +56,8 @@ async function getGameById(id) {
 async function getAllCategories() {
   const { rows } = await pool.query(
     `
-      SELECT * FROM categories    
+      SELECT * FROM categories
+      ORDER BY name;  
     `
   );
 
@@ -66,7 +68,7 @@ async function getCategory(name) {
   const { rows } = await pool.query(
     `
       SELECT * FROM categories
-      WHERE name = $1
+      WHERE name = $1;
     `,
     [name]
   );
@@ -84,10 +86,31 @@ async function createCategory(name) {
   );
 }
 
-async function createItem(name, description, price) {
+async function updateCategory(id, name) {
   await pool.query(
     `
-      INSERT INTO categories (name, description, price)
+      UPDATE categories
+      SET name = $1
+      WHERE id = $2;
+    `,
+    [name, id]
+  );
+}
+
+async function deleteCategory(id) {
+  await pool.query(
+    `
+      DELETE FROM categories
+      WHERE id = $1
+    `,
+    [id]
+  );
+}
+
+async function createGame(name, description, price) {
+  await pool.query(
+    `
+      INSERT INTO games (name, description, price)
       VALUES ($1, $2, $3);  
     `,
     [name, description, price]
@@ -101,5 +124,7 @@ module.exports = {
   getAllCategories,
   getCategory,
   createCategory,
-  createItem,
+  updateCategory,
+  deleteCategory,
+  createGame,
 };
