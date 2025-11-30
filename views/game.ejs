@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/output.css">
+    <title><%= title %></title>
+  </head>
+  <body>
+    <h1><%= title %></h1>
+    <a href="/">Back to Games</a>
+    <% if (locals.game) { %>
+      <div class="game" data-id="<%= game.id %>">
+        <span class="name">
+          <%= game.name %>
+        </span>
+        <p class="description">
+          <%= game.description %>
+        </p>
+        <span class="price">
+          $ <%= game.price %>
+        </span>
+
+        <div class="game-categories">
+          <% if (game.categories.length > 0) { %>
+            <% game.categories.forEach(category => { %>
+              <div class="game-category-item" data-id="<%= category.id %>">
+                <%= category.name %>
+                <button type="button" class="btn-remove-category" title="Remove category">✖</button>
+              </div>
+            <% }) %>
+          <% } %>
+          
+          <div class="add-category-wrapper">
+            <button type="button" class="btn-add-category">Add Category</button>
+            <div hidden class="add-category-container">
+              <select class="inline-category-select">
+                <option value="" disabled selected>Select category</option>
+                <% if (locals.categories) { %>
+                  <% categories.forEach(cat => { %>
+                    <% if (!game.categories.some(gc => gc.id === cat.id)) { %>
+                      <option value="<%= cat.id %>"><%= cat.name %></option>
+                    <% } %>
+                  <% }) %>
+                <% } %>
+              </select>
+              <button type="button" class="btn-save-category">✔</button>
+              <button type="button" class="btn-cancel-category">✖</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <form id="game-remove-category" action="/games/gameId/removeCategory" method="post">
+          <input hidden type="text" name="categoryId">
+      </form>
+
+      <form hidden id="game-add-category" action="/games/gameId/addCategory" method="POST">
+        <input hidden type="text" name="categoryId" required />
+      </form>
+
+      <% } else { %>
+        <p class="error-message">
+          Could not find the game.
+        </p>
+      <% } %>
+    <script src="/js/gameCategoryManager.js" defer></script>
+  </body>
+</html>

@@ -1,72 +1,87 @@
 const db = require('../db/queries');
-const { body, validationResult, matchedData } = require('express-validator');
+const { validationResult, matchedData } = require('express-validator');
+const categoryValidation = require('../validations/category');
+const passwordValidation = require('../validations/password');
 
-const categoryValidation = [
-  body('name')
-    .trim()
-    .notEmpty()
-    .withMessage('Category name can not be empty.')
-    .not()
-    .contains(',')
-    .withMessage('Category name can not contain comma ","'),
-];
-
-const passwordValidation = [
-  body('password')
-    .trim()
-    .notEmpty()
-    .withMessage('Password can not be empty.')
-    .custom((value) => {
-      if (value === process.env.ADMIN_PASSWORD) {
-        return true;
-      }
-
-      throw Error('Password does not match with the Admin password.');
-    }),
-];
+let title = 'Game Inventory';
+let subtitle = 'All Games';
 
 const createCategory = [
   categoryValidation,
   async (req, res) => {
-    let title = 'Game Inventory';
-    const categories = await db.getAllCategories();
-
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      const categories = await db.getAllCategories();
+      const games = await db.getAllGames();
+
       return res.status(400).render('index', {
         title,
-        subtitle: 'Category Error',
+        subtitle,
         categories,
-        categoryErrors: errors.array(),
+        games,
+        toast: {
+          type: 'error',
+          message: errors
+            .array()
+            .map((e) => e.msg)
+            .join('<br>'),
+        },
       });
     }
 
     const { name } = matchedData(req);
     await db.createCategory(name);
-    res.redirect('/');
+
+    const categories = await db.getAllCategories();
+    const games = await db.getAllGames();
+
+    res.render('index', {
+      title,
+      subtitle,
+      categories,
+      games,
+      toast: { type: 'success', message: 'Category created successfully' },
+    });
   },
 ];
 
 const updateCategory = [
   categoryValidation,
   async (req, res) => {
-    let title = 'Game Inventory';
-    const categories = await db.getAllCategories();
-
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      const categories = await db.getAllCategories();
+      const games = await db.getAllGames();
+
       return res.status(400).render('index', {
         title,
-        subtitle: 'Category Error',
+        subtitle,
+        games,
         categories,
-        categoryErrors: errors.array(),
+        toast: {
+          type: 'error',
+          message: errors
+            .array()
+            .map((e) => e.msg)
+            .join('<br>'),
+        },
       });
     }
 
     const { categoryId } = req.params;
     const { name } = matchedData(req);
     await db.updateCategory(Number(categoryId), name);
-    res.redirect('/');
+
+    const categories = await db.getAllCategories();
+    const games = await db.getAllGames();
+
+    res.render('index', {
+      title,
+      subtitle,
+      games,
+      categories,
+      toast: { type: 'success', message: 'Category updated successfully' },
+    });
   },
 ];
 
@@ -85,6 +100,7 @@ const deleteCategory = [
     await db.deleteCategory(Number(categoryId));
     res.send({
       success: true,
+      message: 'Category deleted successfully',
     });
   },
 ];

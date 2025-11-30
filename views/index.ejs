@@ -3,9 +3,11 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/output.css">
     <title><%= title %></title>
   </head>
   <body>
+    <%- include('partials/toast') %>
     <h1><%= title %></h1>
 
     <aside class="sidebar">
@@ -50,20 +52,14 @@
             <span>Could not find any category. Be first to add a new category.</span>
           <% } %>
 
-          <div hidden class="category" id="new-category-row">
-            <div class="add-container">
+          <div class="category" id="new-category-row">
+            <div hidden class="add-container">
               <input type="text" class="inline-add-input" placeholder="Category Name" required/>
               <button type="button" class="btn-save">✔</button>
               <button type="button" class="btn-cancel">✖</button>
             </div>
             <button type="button" class="btn-add">Add New Category</button>
           </div>
-
-          <% if (locals.categoryErrors) { %>
-            <section>
-              <%- include('partials/categoryErrors') %>
-            </section>
-          <% } %>
 
           <div class="filter-actions">
             <button type="submit" form="category-filter">Filter</button>
@@ -76,42 +72,127 @@
     </aside>
 
     <main>
-      <h2><%= subtitle %></h2>
       <% if (locals.games) { %>
         <section>
+          <h2><%= subtitle %></h2>
           <% if (games.length > 0) { %> 
-            <ul class="games">
+            <div class="games">
               <% games.forEach(game => { %>
-                <li class="game">
-                  <span class="name">
-                    <%= game.name %>
-                  </span>
-                </li>
+                <div class="game"  data-id="<%= game.id %>">
+                  <a href="/games/<%= game.id %>">
+                    <span class="name">
+                      <%= game.name %>
+                    </span>
+                    <p class="description">
+                      <%= game.description %>
+                    </p>
+                    <span class="price">
+                      $ <%= game.price %>
+                    </span>
+                  </a>
+
+                  <div class="game-categories">
+                    <% if (game.categories.length > 0) { %>
+                      <% game.categories.forEach(category => { %>
+                        <div class="game-category-item" data-id="<%= category.id %>">
+                          <%= category.name %>
+                          <button type="button" class="btn-remove-category" title="Remove category">✖</button>
+                        </div>
+                      <% }) %>
+                    <% } %>
+                    
+                    <div class="add-category-wrapper">
+                      <button type="button" class="btn-add-category">Add Category</button>
+                      <div hidden class="add-category-container">
+                        <select class="inline-category-select">
+                          <option value="" disabled selected>Select category</option>
+                          <% if (locals.categories) { %>
+                            <% categories.forEach(cat => { %>
+                              <% if (!game.categories.some(gc => gc.id === cat.id)) { %>
+                                <option value="<%= cat.id %>"><%= cat.name %></option>
+                              <% } %>
+                            <% }) %>
+                          <% } %>
+                        </select>
+                        <button type="button" class="btn-save-category">✔</button>
+                        <button type="button" class="btn-cancel-category">✖</button>
+                      </div>
+                    </div>
+                  </div>
+                    
+                  <div hidden class="edit-container">
+                    <input type="text" class="inline-edit-input" value="<%= game.name %>" placeholder="Game Name" required />
+                    <textarea
+                      name="description"
+                      class="inline-add-description"
+                      placeholder="Some fancy description about the game..."
+                      required
+                    ><%= game.description %> </textarea>
+                    <input type="number" name="price" class="inline-add-price" value="<%= game.price %>" placeholder="19.99" required>
+                    <button type="button" class="btn-save">✔</button>
+                    <button type="button" class="btn-cancel">✖</button>
+                  </div>
+                  
+                  <div class="actions">
+                    <button type="button" class="btn-edit">Edit</button>
+                    <button type="button" class="btn-delete">Delete</button>
+                  </div>
+                </div>
               <% }) %>
-            </ul>
+            </div>
           <% } else if (locals.categories?.length > 0) { %>
             <span>Could not find any game with given categories.</span>
           <% } else { %>
             <span>Could not find any game. Be first to add a new game.</span>
           <% } %>
-          
-          <% if (locals.gameErrors) { %>
-            <section>
-              <%- include('partials/gameErrors') %>
-            </section>
-          <% } %>
-        </section> 
+                  
+          <div class="game" id="new-game-row">
+            <div hidden class="add-container">
+              <input type="text" class="inline-add-input" placeholder="Game Name" required />
+              <textarea 
+                name="description"
+                class="inline-add-description"
+                placeholder="Some fancy description about the game..."
+                required
+              ></textarea>
+              <input type="number" name="price" class="inline-add-price" required>
+              <button type="button" class="btn-save">✔</button>
+              <button type="button" class="btn-cancel">✖</button>
+            </div>
+            <button type="button" class="btn-add">Add New Game</button>
+          </div>
+        </section>
       <% } %>
-  
+
     </main>
 
-    <div hidden class="category-forms">
+    <div hidden class="forms">
       <form id="category-add" action="/categories/new" method="POST">
         <input hidden type="text" name="name" required />
       </form>
 
       <form hidden id="category-update" action="/categories/categoryId/update" method="POST">
         <input hidden type="text" name="name" required />
+      </form>
+
+      <form hidden id="game-add" action="/games/new" method="POST">
+        <input hidden type="text" name="name" required />
+        <textarea hidden name="description" required></textarea>
+        <input hidden type="number" name="price" required />
+      </form>
+
+      <form hidden id="game-update" action="/games/gameId/update" method="POST">
+        <input hidden type="text" name="name" required />
+        <textarea hidden name="description" required></textarea>
+        <input hidden type="number" name="price" required />
+      </form>
+
+      <form id="game-remove-category" action="/games/gameId/removeCategory" method="post">
+        <input hidden type="text" name="categoryId">
+      </form>
+
+      <form hidden id="game-add-category" action="/games/gameId/addCategory" method="POST">
+        <input hidden type="text" name="categoryId" required />
       </form>
     </div>
 
@@ -127,175 +208,9 @@
         <p id="dialog-error-msg"></p>
       </form>
     </dialog>
-    
-    <script>
-      const categories = document.querySelectorAll('.category');
-      const newCategoryRow = document.getElementById('new-category-row');
-      const btnAdd = document.querySelector('.btn-add');
-      
-      // Dialog elements
-      const deleteDialog = document.getElementById('delete-dialog');
-      const dialogPasswordInput = document.getElementById('dialog-password-input');
-      const dialogErrorMsg = document.getElementById('dialog-error-msg');
-      const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
-      
-      // Form elements
-      const categoryAddForm = document.getElementById('category-add');
-      const categoryUpdateForm = document.getElementById('category-update');
-      const addInput = document.querySelector('#new-category-row .inline-add-input');
-      
-      // State
-      let pendingDeleteId = null;
-      
-      function handleKeys(e) {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          const category = e.target.closest('.category');
-          const saveBtn = category.querySelector('.btn-save');
-          saveBtn.click();
-        } else if (e.key === 'Escape') {
-          e.preventDefault();
-          const category = e.target.closest('.category');
-          const cancelBtn = category.querySelector('.btn-cancel');
-          cancelBtn.click();
-        }
-      }
-      
-      function showError(message) {
-        dialogErrorMsg.textContent = message;
-        dialogErrorMsg.style.display = 'block';
-      }
-      
-      function hideError() {
-        dialogErrorMsg.style.display = 'none';
-      }
-      
-      function handleAddButton() {
-        newCategoryRow.hidden = false;
-        addInput.focus();
-        btnAdd.hidden = true;
-      }
-      
-      function handleEditButton(category) {
-        const categoryName = category.querySelector('.name');
-        const categoryInput = category.querySelector('.inline-edit-input');
-        const editContainer = category.querySelector('.edit-container');
-        const editBtn = category.querySelector('.btn-edit');
-        
-        categoryName.hidden = true;
-        editContainer.hidden = false;
-        editBtn.hidden = true;
-        categoryInput.focus();
-      }
-      
-      function handleSaveButton(category, isNewCategory, categoryId) {
-        if (isNewCategory) {
-          const addInputValue = category.querySelector('.inline-add-input').value;
-          const addFormInput = categoryAddForm.querySelector('input');
-          
-          addFormInput.value = addInputValue;
-          categoryAddForm.submit();
-        } else {
-          const categoryInput = category.querySelector('.inline-edit-input');
-          const updateFormInput = categoryUpdateForm.querySelector('input');
-          
-          categoryUpdateForm.action = `/categories/${categoryId}/update`;
-          updateFormInput.value = categoryInput.value;
-          categoryUpdateForm.submit();
-        }
-      }
-      
-      function handleCancelButton(category, isNewCategory) {
-        if (isNewCategory) {
-          category.hidden = true;
-          btnAdd.hidden = false;
-          category.querySelector('.inline-add-input').value = '';
-        } else {
-          const categoryName = category.querySelector('.name');
-          const editContainer = category.querySelector('.edit-container');
-          const editBtn = category.querySelector('.btn-edit');
-          
-          categoryName.hidden = false;
-          editContainer.hidden = true;
-          editBtn.hidden = false;
-        }
-      }
-      
-      function handleDeleteButton(categoryId) {
-        pendingDeleteId = categoryId;
-        dialogPasswordInput.value = '';
-        hideError();
-        deleteDialog.showModal();
-      }
-      
-      async function handleConfirmDelete() {
-        const password = dialogPasswordInput.value;
-        
-        try {
-          const response = await fetch(`/categories/${pendingDeleteId}/delete`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ password })
-          });
-          
-          if (response.ok) {
-            window.location.reload();
-          } else {
-            const data = await response.json();
-            showError(data.errors[0].msg);
-          }
-        } catch (err) {
-          console.error('Error: ', err);
-          showError('Server Error');
-        }
-      }
-      
-      // Enter key handling for all edit inputs
-      document.querySelectorAll('.inline-edit-input').forEach(input => {
-        input.addEventListener('keydown', handleKeys);
-      });
-      
-      // Enter key handling for add input
-      addInput.addEventListener('keydown', handleKeys);
 
-      // Handle Enter key in delete dialog password input
-      dialogPasswordInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          confirmDeleteBtn.click();
-        }
-      });
-      
-      // Confirm delete button
-      confirmDeleteBtn.addEventListener('click', handleConfirmDelete);
-      
-      // Main click event delegation
-      document.addEventListener('click', (e) => {
-        // Handle add button
-        if (e.target.classList.contains('btn-add')) {
-          handleAddButton();
-          return;
-        }
-        
-        const category = e.target.closest('.category');
-        if (!category) return;
-        
-        const isNewCategory = category.id === 'new-category-row';
-        const categoryId = category.dataset.id;
-        
-        // Route to appropriate handler based on button clicked
-        if (e.target.classList.contains('btn-edit')) {
-          handleEditButton(category);
-        } else if (e.target.classList.contains('btn-save')) {
-          handleSaveButton(category, isNewCategory, categoryId);
-        } else if (e.target.classList.contains('btn-cancel')) {
-          handleCancelButton(category, isNewCategory);
-        } else if (e.target.classList.contains('btn-delete')) {
-          handleDeleteButton(categoryId);
-        }
-      });
-    </script>
+    <script src="/js/toast.js" defer></script>
+    <script src="/js/gameCategoryManager.js" defer></script>
+    <script src="/js/main.js" defer></script>
   </body>
 </html>
