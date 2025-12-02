@@ -163,6 +163,9 @@ async function main() {
 
   const client = new Client({
     connectionString: dbURL,
+    ssl: {
+      require: true,
+    },
   });
 
   try {

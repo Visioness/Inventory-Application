@@ -157,29 +157,29 @@
                 </div>
               <% }) %>
             </div>
-            <div class="game w-2xs relative flex flex-col border-2 border-neutral-400 rounded-lg p-4 gap-2" id="new-game-row">
-              <div hidden class="add-container flex flex-col gap-2">
-                <input type="text" class="inline-add-input text-lg font-bold text-neutral-800 border-b-1 border-neutral-300 focus:border-amber-500 outline-none bg-transparent placeholder-neutral-400" placeholder="Game Name" required />
-                <textarea 
-                  name="description"
-                  class="inline-add-description text-sm text-neutral-600 border-b-1 border-neutral-300 focus:border-amber-500 outline-none bg-transparent placeholder-neutral-400 resize-none h-20"
-                  placeholder="Some fancy description about the game..."
-                  required
-                ></textarea>
-                <input type="number" name="price" class="inline-add-price text-base font-semibold text-green-600 border-b-1 border-neutral-300 focus:border-amber-500 outline-none bg-transparent placeholder-neutral-400" placeholder="19.99" required>
-                <div class="flex gap-2 mt-2">
-                  <button type="button" class="btn-save flex justify-center items-center w-8 h-8 bg-green-500 hover:bg-green-600 text-white rounded-full transition-colors duration-300 cursor-pointer" title="Save">✓</button>
-                  <button type="button" class="btn-cancel flex justify-center items-center w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full transition-colors duration-300 cursor-pointer" title="Cancel">✕</button>
-                </div>
-              </div>
-              <button type="button" class="btn-add flex w-full h-full justify-center items-center text-neutral-400 hover:text-amber-500 text-4xl transition-colors duration-300 cursor-pointer" title="New Game">✚</button>
-            </div>
           <% } else if (locals.categories?.length > 0) { %>
             <span>Could not find any game with given categories.</span>
           <% } else { %>
             <span>Could not find any game. Be first to add a new game.</span>
           <% } %>
                   
+          <div class="game w-2xs relative flex flex-col border-2 border-neutral-400 rounded-lg p-4 gap-2" id="new-game-row">
+            <div hidden class="add-container flex flex-col gap-2">
+              <input type="text" class="inline-add-input text-lg font-bold text-neutral-800 border-b-1 border-neutral-300 focus:border-amber-500 outline-none bg-transparent placeholder-neutral-400" placeholder="Game Name" required />
+              <textarea 
+                name="description"
+                class="inline-add-description text-sm text-neutral-600 border-b-1 border-neutral-300 focus:border-amber-500 outline-none bg-transparent placeholder-neutral-400 resize-none h-20"
+                placeholder="Some fancy description about the game..."
+                required
+              ></textarea>
+              <input type="number" name="price" class="inline-add-price text-base font-semibold text-green-600 border-b-1 border-neutral-300 focus:border-amber-500 outline-none bg-transparent placeholder-neutral-400" placeholder="19.99" required>
+              <div class="flex gap-2 mt-2">
+                <button type="button" class="btn-save flex justify-center items-center w-8 h-8 bg-green-500 hover:bg-green-600 text-white rounded-full transition-colors duration-300 cursor-pointer" title="Save">✓</button>
+                <button type="button" class="btn-cancel flex justify-center items-center w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full transition-colors duration-300 cursor-pointer" title="Cancel">✕</button>
+              </div>
+            </div>
+            <button type="button" class="btn-add flex w-full h-full justify-center items-center text-neutral-400 hover:text-amber-500 text-4xl transition-colors duration-300 cursor-pointer" title="New Game">✚</button>
+          </div>
         </section>
       <% } %>
     </main>
