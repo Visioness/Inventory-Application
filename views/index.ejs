@@ -6,13 +6,13 @@
     <link rel="stylesheet" href="/output.css">
     <title><%= title %></title>
   </head>
-  <body class="h-screen grid grid-rows-[auto_1fr_auto] grid-cols-[1fr_3fr] overflow-hidden">
-    <header class="flex justify-center items-center col-span-2 border-b-2 border-neutral-300 p-4">
-      <h1 class="text-3xl font-bold"><%= title %></h1>
+  <body class="h-screen grid grid-rows-[auto_auto_1fr_auto] md:grid-rows-[auto_1fr_auto] grid-cols-1 md:grid-cols-[minmax(auto,350px)_1fr] overflow-hidden">
+    <header class="flex justify-center items-center col-span-1 md:col-span-2 border-b-2 border-neutral-300 p-4">
+      <h1 class="text-2xl md:text-3xl font-bold"><%= title %></h1>
     </header>
     <%- include('partials/toast') %>
 
-    <aside class="sidebar max-w-xs flex items-center p-4 border-r-2 border-neutral-300">
+    <aside class="sidebar flex justify-center items-center p-4 border-b-2 md:border-b-0 md:border-r-2 border-neutral-300 max-h-48 md:max-h-none overflow-y-auto md:overflow-y-visible">
       <% if (locals.categories) { %>
         <section class="h-full flex flex-col items-center gap-4 p-4">
           <h2 class="text-xl font-bold">Categories</h2>
@@ -44,8 +44,8 @@
                     </div>
                     
                     <div class="actions flex rounded-r-full">
-                      <button type="button" class="btn-edit w-6 bg-neutral-100 hover:bg-neutral-400 group-has-[:checked]:bg-amber-500 group-has-[:checked]:hover:bg-amber-600 text-neutral-800 transition-colors duration-300 cursor-pointer" title="Edit">✎</button>
-                      <button type="button" class="btn-delete w-6 bg-red-300 hover:bg-neutral-400 group-has-[:checked]:bg-amber-500 group-has-[:checked]:hover:bg-amber-600 text-neutral-800 transition-colors duration-300 rounded-r-xl cursor-pointer" title="Delete">✘</button>
+                      <button type="button" class="btn-edit w-6 bg-blue-200 hover:bg-blue-300 group-has-[:checked]:bg-amber-500 group-has-[:checked]:hover:bg-amber-600 text-neutral-800 transition-colors duration-300 cursor-pointer" title="Edit">✎</button>
+                      <button type="button" class="btn-delete w-6 bg-red-200 hover:bg-red-300 group-has-[:checked]:bg-amber-500 group-has-[:checked]:hover:bg-amber-600 text-neutral-800 transition-colors duration-300 rounded-r-xl cursor-pointer" title="Delete">✘</button>
                     </div>
                   </div>
                 <% }) %>
@@ -74,7 +74,7 @@
 
     <main class="overflow-y-auto p-4">
       <% if (locals.games) { %>
-        <section class="relative flex flex-col justify-center items-center">
+        <section class="relative flex flex-col justify-center items-center gap-4">
           <h2 class="text-xl font-bold"><%= subtitle %></h2>
           <% if (games.length > 0) { %> 
             <div class="games flex flex-wrap justify-center gap-4">
@@ -121,13 +121,13 @@
                           <span class="name flex justify-center items-center px-2 py-1 text-[10px] font-bold">
                             <%= category.name %>
                           </span>
-                          <button type="button" class="btn-remove-category flex justify-center items-center w-6 bg-neutral-100 hover:bg-neutral-400 group-has-[:checked]:bg-amber-500 group-has-[:checked]:hover:bg-amber-600 text-neutral-800 transition-colors duration-300 rounded-r-xl cursor-pointer" title="Remove category">✕</button>
+                          <button type="button" class="btn-remove-category flex justify-center items-center w-6 bg-neutral-100 hover:bg-neutral-300 group-has-[:checked]:bg-amber-500 group-has-[:checked]:hover:bg-amber-600 text-neutral-800 transition-colors duration-300 rounded-r-xl cursor-pointer" title="Remove category">✕</button>
                         </div>
                       <% }) %>
                     <% } %>
                     
                     <div class="add-category-wrapper text-xs">
-                      <button type="button" class="btn-add-category flex items-center border-1 border-neutral-300 bg-neutral-200 text-neutral-600 rounded-full px-2 py-1 text-[10px] font-bold" title="New Category">✚ New Category</button>
+                      <button type="button" class="btn-add-category flex items-center border-1 border-neutral-300 bg-neutral-200 hover:bg-neutral-300 text-neutral-600 rounded-full px-2 py-1 text-[10px] font-bold cursor-pointer transition-colors duration-300" title="New Category">✚ New Category</button>
                       <div hidden class="add-category-container h-max flex border-1 border-neutral-300 bg-neutral-200 text-neutral-600 text-xs rounded-full">
                         <div class="relative flex items-center rounded-l-full">
                           <select name="category" class="inline-category-select max-w-32 appearance-none bg-transparent rounded-l-full pl-2 pr-6 py-1 text-[10px] font-bold cursor-pointer">
@@ -151,11 +151,28 @@
                   </div>
                   
                   <div class="actions absolute top-1 right-1 flex border-1 border-neutral-300 rounded-sm">
-                    <button type="button" class="btn-edit flex justify-center items-center w-6 bg-neutral-100 hover:bg-neutral-400 text-neutral-800 transition-colors duration-300 rounded-l-sm cursor-pointer">✎</button>
-                    <button type="button" class="btn-delete flex justify-center items-center w-6 bg-neutral-100 hover:bg-neutral-400 text-neutral-800 transition-colors duration-300 rounded-r-sm cursor-pointer">✘</button>
+                    <button type="button" class="btn-edit flex justify-center items-center w-6 bg-blue-200 hover:bg-blue-300 text-neutral-800 transition-colors duration-300 rounded-l-sm cursor-pointer">✎</button>
+                    <button type="button" class="btn-delete flex justify-center items-center w-6 bg-red-200 hover:bg-red-300 text-neutral-800 transition-colors duration-300 rounded-r-sm cursor-pointer">✘</button>
                   </div>
                 </div>
               <% }) %>
+            </div>
+            <div class="game w-2xs relative flex flex-col border-2 border-neutral-400 rounded-lg p-4 gap-2" id="new-game-row">
+              <div hidden class="add-container flex flex-col gap-2">
+                <input type="text" class="inline-add-input text-lg font-bold text-neutral-800 border-b-1 border-neutral-300 focus:border-amber-500 outline-none bg-transparent placeholder-neutral-400" placeholder="Game Name" required />
+                <textarea 
+                  name="description"
+                  class="inline-add-description text-sm text-neutral-600 border-b-1 border-neutral-300 focus:border-amber-500 outline-none bg-transparent placeholder-neutral-400 resize-none h-20"
+                  placeholder="Some fancy description about the game..."
+                  required
+                ></textarea>
+                <input type="number" name="price" class="inline-add-price text-base font-semibold text-green-600 border-b-1 border-neutral-300 focus:border-amber-500 outline-none bg-transparent placeholder-neutral-400" placeholder="19.99" required>
+                <div class="flex gap-2 mt-2">
+                  <button type="button" class="btn-save flex justify-center items-center w-8 h-8 bg-green-500 hover:bg-green-600 text-white rounded-full transition-colors duration-300 cursor-pointer" title="Save">✓</button>
+                  <button type="button" class="btn-cancel flex justify-center items-center w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full transition-colors duration-300 cursor-pointer" title="Cancel">✕</button>
+                </div>
+              </div>
+              <button type="button" class="btn-add flex w-full h-full justify-center items-center text-neutral-400 hover:text-amber-500 text-4xl transition-colors duration-300 cursor-pointer" title="New Game">✚</button>
             </div>
           <% } else if (locals.categories?.length > 0) { %>
             <span>Could not find any game with given categories.</span>
@@ -163,29 +180,12 @@
             <span>Could not find any game. Be first to add a new game.</span>
           <% } %>
                   
-          <div class="game w-2xs relative flex flex-col border-2 border-neutral-400 rounded-lg p-4 gap-2" id="new-game-row">
-            <div hidden class="add-container flex flex-col gap-2">
-              <input type="text" class="inline-add-input text-lg font-bold text-neutral-800 border-b-1 border-neutral-300 focus:border-amber-500 outline-none bg-transparent placeholder-neutral-400" placeholder="Game Name" required />
-              <textarea 
-                name="description"
-                class="inline-add-description text-sm text-neutral-600 border-b-1 border-neutral-300 focus:border-amber-500 outline-none bg-transparent placeholder-neutral-400 resize-none h-20"
-                placeholder="Some fancy description about the game..."
-                required
-              ></textarea>
-              <input type="number" name="price" class="inline-add-price text-base font-semibold text-green-600 border-b-1 border-neutral-300 focus:border-amber-500 outline-none bg-transparent placeholder-neutral-400" placeholder="19.99" required>
-              <div class="flex gap-2 mt-2">
-                 <button type="button" class="btn-save flex justify-center items-center w-8 h-8 bg-green-500 hover:bg-green-600 text-white rounded-full transition-colors duration-300 cursor-pointer" title="Save">✓</button>
-                 <button type="button" class="btn-cancel flex justify-center items-center w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full transition-colors duration-300 cursor-pointer" title="Cancel">✕</button>
-              </div>
-            </div>
-            <button type="button" class="btn-add flex w-full h-full justify-center items-center text-neutral-400 hover:text-amber-500 text-4xl transition-colors duration-300 cursor-pointer" title="New Game">✚</button>
-          </div>
         </section>
       <% } %>
     </main>
 
-    <footer class="col-span-2 border-t-2 border-neutral-300 p-1 flex justify-center items-center">
-      <span class="text-md font-bold">by Visioness</span>
+    <footer class="col-span-1 md:col-span-2 border-t-2 border-neutral-300 p-1 flex justify-center items-center">
+      <span class="text-sm md:text-md font-bold">by Visioness</span>
     </footer>
 
     <div hidden class="forms">
@@ -218,16 +218,16 @@
       </form>
     </div>
 
-    <dialog id="delete-dialog">
-      <form method="dialog">
-        <h3>Admin Access Required</h3>
-        <p>Please enter the admin password to delete this category.</p>
-        <input type="password" id="dialog-password-input"/>
-        <div class="dialog-actions">
-          <button value="cancel">Cancel</button>
-          <button id="confirm-delete-btn" type="button">Delete</button>
+    <dialog id="delete-dialog" class="backdrop:bg-black/30 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 m-0 rounded-lg border-2 border-neutral-300 shadow-xl p-0 w-full max-w-md">
+      <form method="dialog" class="flex flex-col gap-4 p-6">
+        <h3 class="text-xl font-bold text-neutral-800">Admin Access Required</h3>
+        <p class="text-sm text-neutral-600">Please enter the admin password to delete this category.</p>
+        <input type="password" id="dialog-password-input" class="w-full px-4 py-2 border-2 border-neutral-300 rounded-lg focus:border-amber-500 focus:outline-none transition-colors duration-300"/>
+        <div class="dialog-actions flex gap-2 justify-end">
+          <button value="cancel" class="px-4 py-2 bg-neutral-200 hover:bg-neutral-300 text-neutral-800 font-semibold rounded-lg transition-colors duration-300 cursor-pointer">Cancel</button>
+          <button id="confirm-delete-btn" type="button" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg transition-colors duration-300 cursor-pointer">Delete</button>
         </div>
-        <p id="dialog-error-msg"></p>
+        <p id="dialog-error-msg" class="text-sm text-red-600 font-semibold text-center"></p>
       </form>
     </dialog>
 
