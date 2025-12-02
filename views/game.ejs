@@ -6,64 +6,132 @@
     <link rel="stylesheet" href="/output.css">
     <title><%= title %></title>
   </head>
-  <body>
-    <h1><%= title %></h1>
-    <a href="/">Back to Games</a>
-    <% if (locals.game) { %>
-      <div class="game" data-id="<%= game.id %>">
-        <span class="name">
-          <%= game.name %>
-        </span>
-        <p class="description">
-          <%= game.description %>
-        </p>
-        <span class="price">
-          $ <%= game.price %>
-        </span>
+  <body class="h-screen grid grid-rows-[auto_1fr_auto] grid-cols-[1fr] overflow-hidden">
+    <header class="relative flex justify-center items-center col-span-2 border-b-2 border-neutral-300 p-4">
+      <a href="/" class="absolute left-4 flex items-center gap-1 text-neutral-600 hover:text-amber-500 transition-colors duration-300 font-bold">
+        <span class="h-lh text-xl">< Back</span> 
+      </a>
+      <h1 class="text-3xl font-bold"><%= title %></h1>
+    </header>
 
-        <div class="game-categories">
-          <% if (game.categories.length > 0) { %>
-            <% game.categories.forEach(category => { %>
-              <div class="game-category-item" data-id="<%= category.id %>">
-                <%= category.name %>
-                <button type="button" class="btn-remove-category" title="Remove category">✖</button>
-              </div>
-            <% }) %>
-          <% } %>
-          
-          <div class="add-category-wrapper">
-            <button type="button" class="btn-add-category">Add Category</button>
-            <div hidden class="add-category-container">
-              <select class="inline-category-select">
-                <option value="" disabled selected>Select category</option>
-                <% if (locals.categories) { %>
-                  <% categories.forEach(cat => { %>
-                    <% if (!game.categories.some(gc => gc.id === cat.id)) { %>
-                      <option value="<%= cat.id %>"><%= cat.name %></option>
-                    <% } %>
-                  <% }) %>
-                <% } %>
-              </select>
-              <button type="button" class="btn-save-category">✔</button>
-              <button type="button" class="btn-cancel-category">✖</button>
+    <main class="overflow-y-auto p-4 flex flex-col items-center">
+      <% if (locals.game) { %>
+        <div class="game relative flex flex-col gap-4 border-2 rounded-lg p-8 max-w-2xl mx-auto" data-id="<%= game.id %>">
+          <span class="name flex justify-center items-center text-2xl font-bold text-neutral-800 mb-4">
+            <%= game.name %>
+          </span>
+          <p class="description text-lg text-neutral-700 mb-4 leading-relaxed">
+            <%= game.description %>
+          </p>
+          <span class="price text-xl font-semibold text-green-600 mb-6">
+            $ <%= game.price %>
+          </span>
+
+          <div hidden class="edit-container flex flex-col gap-4">
+            <input type="text"
+              class="inline-edit-input text-2xl font-bold text-neutral-800 border-b-1 border-neutral-300 focus:border-amber-500 outline-none bg-transparent placeholder-neutral-400"
+              value="<%= game.name %>" placeholder="Game Name" required />
+            <textarea name="description"
+              class="inline-add-description text-lg text-neutral-700 border-b-1 border-neutral-300 focus:border-amber-500 outline-none bg-transparent placeholder-neutral-400 resize-none h-32 leading-relaxed"
+              placeholder="Some fancy description about the game..." required><%= game.description %></textarea>
+            <input type="number" name="price"
+              class="inline-add-price text-xl font-semibold text-green-600 border-b-1 border-neutral-300 focus:border-amber-500 outline-none bg-transparent placeholder-neutral-400"
+              value="<%= game.price %>" placeholder="19.99" required>
+            <div class="flex gap-2">
+              <button type="button"
+                class="btn-save flex justify-center items-center w-8 h-8 bg-green-500 hover:bg-green-600 text-white rounded-full transition-colors duration-300 cursor-pointer"
+                title="Save Edit">✓</button>
+              <button type="button"
+                class="btn-cancel flex justify-center items-center w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full transition-colors duration-300 cursor-pointer"
+                title="Cancel">✕</button>
             </div>
           </div>
+
+          <hr class="h-0.5 border-none bg-neutral-200 rounded-full">
+
+          <div class="game-categories flex flex-wrap gap-2">
+            <% if (game.categories.length > 0) { %>
+              <% game.categories.forEach(category => { %>
+                <div class="h-max game-category-item flex border-1 border-neutral-300 bg-neutral-200 text-neutral-600 text-xs rounded-full" data-id="<%= category.id %>">
+                  <span class="name flex justify-center items-center px-2 py-1 text-[14px] font-bold">
+                    <%= category.name %>
+                  </span>
+                  <button type="button" class="btn-remove-category flex justify-center items-center w-6 bg-neutral-100 hover:bg-neutral-400 group-has-[:checked]:bg-amber-500 group-has-[:checked]:hover:bg-amber-600 text-neutral-800 transition-colors duration-300 rounded-r-xl cursor-pointer" title="Remove category">✕</button>
+                </div>
+              <% }) %>
+            <% } %>
+            
+            <div class="add-category-wrapper text-xs">
+              <button type="button" class="btn-add-category flex items-center border-1 border-neutral-300 bg-neutral-200 text-neutral-600 rounded-full px-2 py-1 text-[14px] font-bold" title="New Category">✚ New Category</button>
+              <div hidden class="add-category-container h-max flex border-1 border-neutral-300 bg-neutral-200 text-neutral-600 text-xs rounded-full">
+                <div class="relative flex items-center rounded-l-full">
+                  <select name="category" class="inline-category-select max-w-48 appearance-none bg-transparent rounded-l-full pl-2 pr-6 py-1 text-[14px] font-bold cursor-pointer">
+                    <option value="" disabled selected>Select category</option>
+                    <% if (locals.categories) { %>
+                      <% categories.forEach(cat => { %>
+                        <% if (!game.categories.some(gc => gc.id === cat.id)) { %>
+                          <option class="p-4" value="<%= cat.id %>">
+                            <span class="max-w-32 p-4 overflow-hidden text-ellipsis whitespace-nowrap"><%= cat.name %></span>
+                          </option>
+                        <% } %>
+                      <% }) %>
+                    <% } %>
+                  </select>
+                  <span class="pointer-events-none absolute right-2 text-[8px] font-bold">▼</span>
+                </div>
+                <button type="button" class="btn-save-category flex justify-center items-center w-6 bg-neutral-100 hover:bg-neutral-400 transition-colors duration-300" title="Add">✓</button>
+                <button type="button" class="btn-cancel-category flex justify-center items-center w-6 bg-neutral-100 hover:bg-neutral-400 transition-colors duration-300 rounded-r-xl" title="Cancel">✕</button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="actions absolute top-2 right-2 flex">
+            <button type="button" class="btn-edit flex justify-center items-center w-6 bg-neutral-100 hover:bg-neutral-400 text-neutral-800 transition-colors duration-300 rounded-l-xl">✎</button>
+            <button type="button" class="btn-delete flex justify-center items-center w-6 bg-neutral-100 hover:bg-neutral-400 text-neutral-800 transition-colors duration-300 rounded-r-xl">✘</button>
+          </div>
         </div>
-      </div>
 
-      <form id="game-remove-category" action="/games/gameId/removeCategory" method="post">
-          <input hidden type="text" name="categoryId">
-      </form>
+        <form id="game-remove-category" action="/games/gameId/removeCategory" method="post">
+            <input hidden type="text" name="categoryId">
+        </form>
 
-      <form hidden id="game-add-category" action="/games/gameId/addCategory" method="POST">
-        <input hidden type="text" name="categoryId" required />
-      </form>
+        <form hidden id="game-add-category" action="/games/gameId/addCategory" method="POST">
+          <input hidden type="text" name="categoryId" required />
+        </form>
 
+        <form hidden id="game-update" action="/games/gameId/update" method="POST">
+          <input hidden type="text" name="name" required />
+          <textarea hidden name="description" required></textarea>
+          <input hidden type="number" name="price" required />
+        </form>
+
+        <dialog id="delete-dialog">
+          <form method="dialog">
+            <h3>Admin Access Required</h3>
+            <p>Please enter the admin password to delete this item.</p>
+            <input type="password" id="dialog-password-input"/>
+            <div class="dialog-actions">
+              <button value="cancel">Cancel</button>
+              <button id="confirm-delete-btn" type="button">Delete</button>
+            </div>
+            <p id="dialog-error-msg"></p>
+          </form>
+        </dialog>
+
+        <%- include('partials/toast') %>
       <% } else { %>
         <p class="error-message">
           Could not find the game.
         </p>
       <% } %>
+    </main>
+
+    <footer class="col-span-2 border-t-2 border-neutral-300 p-1">
+      <span>Copyright By Visioness</span>
+    </footer>
+
+    <script src="/js/toast.js" defer></script>
     <script src="/js/gameCategoryManager.js" defer></script>
+    <script src="/js/main.js" defer></script>
   </body>
 </html>

@@ -6,21 +6,24 @@
     <link rel="stylesheet" href="/output.css">
     <title><%= title %></title>
   </head>
-  <body>
+  <body class="h-screen grid grid-rows-[auto_1fr_auto] grid-cols-[1fr_3fr] overflow-hidden">
+    <header class="flex justify-center items-center col-span-2 border-b-2 border-neutral-300 p-4">
+      <h1 class="text-3xl font-bold"><%= title %></h1>
+    </header>
     <%- include('partials/toast') %>
-    <h1><%= title %></h1>
 
-    <aside class="sidebar">
+    <aside class="sidebar max-w-xs flex items-center p-4 border-r-2 border-neutral-300">
       <% if (locals.categories) { %>
-        <section>
-          <h2>Categories</h2>
+        <section class="h-full flex flex-col items-center gap-4 p-4">
+          <h2 class="text-xl font-bold">Categories</h2>
           <% if (categories.length > 0) { %>
-            <form action="/" method="GET" id="category-filter">
-              <div class="categories">
+            <form action="/" method="GET" id="category-filter" class="flex flex-col grow">
+              <div class="categories flex flex-wrap justify-center gap-2 my-auto">
                 <% categories.forEach(category => { %>
-                  <div class="category" data-id="<%= category.id %>">
-                    <label for="category-input-<%= category.id %>" class="label">
-                      <input 
+                  <div class="category group flex border-3 border-neutral-300 bg-neutral-200 text-neutral-600 has-[:checked]:border-amber-500 has-[:checked]:bg-amber-100 transition-colors duration-300 rounded-full cursor-pointer" data-id="<%= category.id %>">
+                    <label for="category-input-<%= category.id %>" class="label peer flex items-center text-xs font-bold cursor-pointer">
+                      <input
+                        class="appearance-none"
                         type="checkbox" 
                         name="category" 
                         id="category-input-<%= category.id %>" 
@@ -29,113 +32,127 @@
                           checked
                         <% } %>
                       />
-                      <span class="name">
+                      <span class="name max-w-32 flex items-center px-2 py-1 overflow-hidden text-ellipsis whitespace-nowrap">
                         <%= category.name %>
                       </span>
                     </label>
   
-                    <div hidden class="edit-container">
-                      <input type="text" class="inline-edit-input" value="<%= category.name %>" placeholder="Category Name" required/>
-                      <button type="button" class="btn-save">✔</button>
-                      <button type="button" class="btn-cancel">✖</button>
+                    <div hidden class="edit-container flex rounded-r-full">
+                      <input type="text" class="inline-edit-input text-xs font-bold w-32 px-2 py-1 rounded-l-full" value="<%= category.name %>" placeholder="Category Name"/>
+                      <button type="button" class="btn-save w-6 bg-neutral-100 hover:bg-neutral-400 group-has-[:checked]:bg-amber-500 group-has-[:checked]:hover:bg-amber-600 text-neutral-800 transition-colors duration-300 cursor-pointer" title="Save">✓</button>
+                      <button type="button" class="btn-cancel w-6 bg-neutral-100 hover:bg-neutral-400 group-has-[:checked]:bg-amber-500 group-has-[:checked]:hover:bg-amber-600 text-neutral-800 transition-colors duration-300 rounded-r-xl cursor-pointer" title="Cancel">✕</button>
                     </div>
                     
-                    <div class="actions">
-                      <button type="button" class="btn-edit">Edit</button>
-                      <button type="button" class="btn-delete">Delete</button>
+                    <div class="actions flex rounded-r-full">
+                      <button type="button" class="btn-edit w-6 bg-neutral-100 hover:bg-neutral-400 group-has-[:checked]:bg-amber-500 group-has-[:checked]:hover:bg-amber-600 text-neutral-800 transition-colors duration-300 cursor-pointer" title="Edit">✎</button>
+                      <button type="button" class="btn-delete w-6 bg-red-300 hover:bg-neutral-400 group-has-[:checked]:bg-amber-500 group-has-[:checked]:hover:bg-amber-600 text-neutral-800 transition-colors duration-300 rounded-r-xl cursor-pointer" title="Delete">✘</button>
                     </div>
                   </div>
                 <% }) %>
+                <div class="category flex gap-2 border-3 border-neutral-300 bg-neutral-200 text-neutral-600 has-[:checked]:border-amber-500 has-[:checked]:bg-amber-100 transition-colors duration-300 rounded-full" id="new-category-row">
+                  <div hidden class="add-container flex rounded-r-full">
+                    <input type="text" class="inline-add-input text-xs font-bold w-32 px-2 py-1 rounded-l-full" placeholder="Category Name"/>
+                    <button type="button" class="btn-save w-6 bg-neutral-100 hover:bg-neutral-400 group-has-[:checked]:bg-amber-500 group-has-[:checked]:hover:bg-amber-600 text-neutral-800 transition-colors duration-300 cursor-pointer" title="Save">✓</button>
+                    <button type="button" class="btn-cancel w-6 bg-neutral-100 hover:bg-neutral-400 group-has-[:checked]:bg-amber-500 group-has-[:checked]:hover:bg-amber-600 text-neutral-800 transition-colors duration-300 rounded-r-xl cursor-pointer" title="Cancel">✕</button>
+                  </div>
+                  <button type="button" class="btn-add bg-neutral-200 text-neutral-600 rounded-full px-2 py-1 text-xs font-bold cursor-pointer">✚ New Category</button>
+                </div>
               </div>
             </form>
-          <% } else { %>
-            <span>Could not find any category. Be first to add a new category.</span>
-          <% } %>
-
-          <div class="category" id="new-category-row">
-            <div hidden class="add-container">
-              <input type="text" class="inline-add-input" placeholder="Category Name" required/>
-              <button type="button" class="btn-save">✔</button>
-              <button type="button" class="btn-cancel">✖</button>
-            </div>
-            <button type="button" class="btn-add">Add New Category</button>
-          </div>
-
-          <div class="filter-actions">
-            <button type="submit" form="category-filter">Filter</button>
-            <a href="/">
-              <button type="button">Clear Filter</button>
+            <% } else { %>
+              <span>Could not find any category. Be first to add a new category.</span>
+            <% } %>
+          <div class="filter-actions flex w-full">
+            <button type="submit" form="category-filter" class="w-1/2 border-3 border-r-1 border-neutral-300 bg-neutral-200 text-neutral-600 hover:bg-neutral-500 hover:border-neutral-600 hover:text-neutral-50 rounded-l-full px-2 py-1 text-xs font-bold transition-colors duration-300">Filter</button>
+            <a class="w-1/2" href="/">
+              <button type="button" class="w-full border-3 border-l-1 border-neutral-300 bg-neutral-200 text-neutral-600 hover:bg-neutral-500 hover:border-neutral-600 hover:text-neutral-50 rounded-r-full px-2 py-1 text-xs font-bold transition-colors duration-300">Clear Filter</button>
             </a>
           </div>
         </section>
       <% } %>
     </aside>
 
-    <main>
+    <main class="overflow-y-auto p-4">
       <% if (locals.games) { %>
-        <section>
-          <h2><%= subtitle %></h2>
+        <section class="relative flex flex-col justify-center items-center">
+          <h2 class="text-xl font-bold"><%= subtitle %></h2>
           <% if (games.length > 0) { %> 
-            <div class="games">
+            <div class="games flex flex-wrap justify-center gap-4">
               <% games.forEach(game => { %>
-                <div class="game"  data-id="<%= game.id %>">
-                  <a href="/games/<%= game.id %>">
-                    <span class="name">
+                <div class="game w-2xs relative flex flex-col border-2 border-neutral-400 rounded-lg p-4 gap-2"  data-id="<%= game.id %>">
+                  <a class="flex flex-col gap-2 overflow-hidden mt-2" href="/games/<%= game.id %>">
+                    <span class="name flex justify-center items-center text-lg font-bold text-neutral-800">
                       <%= game.name %>
                     </span>
-                    <p class="description">
+                    <p class="h-lh w-full description overflow-hidden text-ellipsis whitespace-nowrap text-sm text-neutral-600">
                       <%= game.description %>
                     </p>
-                    <span class="price">
+                    <span class="price text-base font-semibold text-green-600">
                       $ <%= game.price %>
                     </span>
                   </a>
 
-                  <div class="game-categories">
+                  <div hidden class="edit-container flex flex-col gap-2">
+                    <input type="text"
+                      class="inline-edit-input text-lg font-bold text-neutral-800 border-b-1 border-neutral-300 focus:border-amber-500 outline-none bg-transparent placeholder-neutral-400"
+                      value="<%= game.name %>" placeholder="Game Name" required />
+                    <textarea name="description"
+                      class="inline-add-description text-sm text-neutral-600 border-b-1 border-neutral-300 focus:border-amber-500 outline-none bg-transparent placeholder-neutral-400 resize-none h-20"
+                      placeholder="Some fancy description about the game..." required><%= game.description %></textarea>
+                    <input type="number" name="price"
+                      class="inline-add-price text-base font-semibold text-green-600 border-b-1 border-neutral-300 focus:border-amber-500 outline-none bg-transparent placeholder-neutral-400"
+                      value="<%= game.price %>" placeholder="19.99" required>
+                    <div class="flex gap-2 mt-2">
+                      <button type="button"
+                        class="btn-save flex justify-center items-center w-8 h-8 bg-green-500 hover:bg-green-600 text-white rounded-full transition-colors duration-300 cursor-pointer"
+                        title="Save Edit">✓</button>
+                      <button type="button"
+                        class="btn-cancel flex justify-center items-center w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full transition-colors duration-300 cursor-pointer"
+                        title="Cancel">✕</button>
+                    </div>
+                  </div>
+
+                  <hr class="h-0.5 border-none bg-neutral-200 rounded-full">
+
+                  <div class="game-categories flex flex-wrap gap-2">
                     <% if (game.categories.length > 0) { %>
                       <% game.categories.forEach(category => { %>
-                        <div class="game-category-item" data-id="<%= category.id %>">
-                          <%= category.name %>
-                          <button type="button" class="btn-remove-category" title="Remove category">✖</button>
+                        <div class="h-max game-category-item flex border-1 border-neutral-300 bg-neutral-200 text-neutral-600 text-xs rounded-full" data-id="<%= category.id %>">
+                          <span class="name flex justify-center items-center px-2 py-1 text-[10px] font-bold">
+                            <%= category.name %>
+                          </span>
+                          <button type="button" class="btn-remove-category flex justify-center items-center w-6 bg-neutral-100 hover:bg-neutral-400 group-has-[:checked]:bg-amber-500 group-has-[:checked]:hover:bg-amber-600 text-neutral-800 transition-colors duration-300 rounded-r-xl cursor-pointer" title="Remove category">✕</button>
                         </div>
                       <% }) %>
                     <% } %>
                     
-                    <div class="add-category-wrapper">
-                      <button type="button" class="btn-add-category">Add Category</button>
-                      <div hidden class="add-category-container">
-                        <select class="inline-category-select">
-                          <option value="" disabled selected>Select category</option>
-                          <% if (locals.categories) { %>
-                            <% categories.forEach(cat => { %>
-                              <% if (!game.categories.some(gc => gc.id === cat.id)) { %>
-                                <option value="<%= cat.id %>"><%= cat.name %></option>
-                              <% } %>
-                            <% }) %>
-                          <% } %>
-                        </select>
-                        <button type="button" class="btn-save-category">✔</button>
-                        <button type="button" class="btn-cancel-category">✖</button>
+                    <div class="add-category-wrapper text-xs">
+                      <button type="button" class="btn-add-category flex items-center border-1 border-neutral-300 bg-neutral-200 text-neutral-600 rounded-full px-2 py-1 text-[10px] font-bold" title="New Category">✚ New Category</button>
+                      <div hidden class="add-category-container h-max flex border-1 border-neutral-300 bg-neutral-200 text-neutral-600 text-xs rounded-full">
+                        <div class="relative flex items-center rounded-l-full">
+                          <select name="category" class="inline-category-select max-w-32 appearance-none bg-transparent rounded-l-full pl-2 pr-6 py-1 text-[10px] font-bold cursor-pointer">
+                            <option value="" disabled selected>Select category</option>
+                            <% if (locals.categories) { %>
+                              <% categories.forEach(cat => { %>
+                                <% if (!game.categories.some(gc => gc.id === cat.id)) { %>
+                                  <option class="p-4" value="<%= cat.id %>">
+                                    <span class="max-w-32 p-4 overflow-hidden text-ellipsis whitespace-nowrap"><%= cat.name %></span>
+                                  </option>
+                                <% } %>
+                              <% }) %>
+                            <% } %>
+                          </select>
+                          <span class="pointer-events-none absolute right-2 text-[8px] font-bold">▼</span>
+                        </div>
+                        <button type="button" class="btn-save-category flex justify-center items-center w-6 bg-neutral-100 hover:bg-neutral-400 transition-colors duration-300" title="Add">✓</button>
+                        <button type="button" class="btn-cancel-category flex justify-center items-center w-6 bg-neutral-100 hover:bg-neutral-400 transition-colors duration-300 rounded-r-xl" title="Cancel">✕</button>
                       </div>
                     </div>
                   </div>
-                    
-                  <div hidden class="edit-container">
-                    <input type="text" class="inline-edit-input" value="<%= game.name %>" placeholder="Game Name" required />
-                    <textarea
-                      name="description"
-                      class="inline-add-description"
-                      placeholder="Some fancy description about the game..."
-                      required
-                    ><%= game.description %> </textarea>
-                    <input type="number" name="price" class="inline-add-price" value="<%= game.price %>" placeholder="19.99" required>
-                    <button type="button" class="btn-save">✔</button>
-                    <button type="button" class="btn-cancel">✖</button>
-                  </div>
                   
-                  <div class="actions">
-                    <button type="button" class="btn-edit">Edit</button>
-                    <button type="button" class="btn-delete">Delete</button>
+                  <div class="actions absolute top-1 right-1 flex border-1 border-neutral-300 rounded-sm">
+                    <button type="button" class="btn-edit flex justify-center items-center w-6 bg-neutral-100 hover:bg-neutral-400 text-neutral-800 transition-colors duration-300 rounded-l-sm cursor-pointer">✎</button>
+                    <button type="button" class="btn-delete flex justify-center items-center w-6 bg-neutral-100 hover:bg-neutral-400 text-neutral-800 transition-colors duration-300 rounded-r-sm cursor-pointer">✘</button>
                   </div>
                 </div>
               <% }) %>
@@ -146,25 +163,30 @@
             <span>Could not find any game. Be first to add a new game.</span>
           <% } %>
                   
-          <div class="game" id="new-game-row">
-            <div hidden class="add-container">
-              <input type="text" class="inline-add-input" placeholder="Game Name" required />
+          <div class="game w-2xs relative flex flex-col border-2 border-neutral-400 rounded-lg p-4 gap-2" id="new-game-row">
+            <div hidden class="add-container flex flex-col gap-2">
+              <input type="text" class="inline-add-input text-lg font-bold text-neutral-800 border-b-1 border-neutral-300 focus:border-amber-500 outline-none bg-transparent placeholder-neutral-400" placeholder="Game Name" required />
               <textarea 
                 name="description"
-                class="inline-add-description"
+                class="inline-add-description text-sm text-neutral-600 border-b-1 border-neutral-300 focus:border-amber-500 outline-none bg-transparent placeholder-neutral-400 resize-none h-20"
                 placeholder="Some fancy description about the game..."
                 required
               ></textarea>
-              <input type="number" name="price" class="inline-add-price" required>
-              <button type="button" class="btn-save">✔</button>
-              <button type="button" class="btn-cancel">✖</button>
+              <input type="number" name="price" class="inline-add-price text-base font-semibold text-green-600 border-b-1 border-neutral-300 focus:border-amber-500 outline-none bg-transparent placeholder-neutral-400" placeholder="19.99" required>
+              <div class="flex gap-2 mt-2">
+                 <button type="button" class="btn-save flex justify-center items-center w-8 h-8 bg-green-500 hover:bg-green-600 text-white rounded-full transition-colors duration-300 cursor-pointer" title="Save">✓</button>
+                 <button type="button" class="btn-cancel flex justify-center items-center w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full transition-colors duration-300 cursor-pointer" title="Cancel">✕</button>
+              </div>
             </div>
-            <button type="button" class="btn-add">Add New Game</button>
+            <button type="button" class="btn-add flex w-full h-full justify-center items-center text-neutral-400 hover:text-amber-500 text-4xl transition-colors duration-300 cursor-pointer" title="New Game">✚</button>
           </div>
         </section>
       <% } %>
-
     </main>
+
+    <footer class="col-span-2 border-t-2 border-neutral-300 p-1 flex justify-center items-center">
+      <span class="text-md font-bold">by Visioness</span>
+    </footer>
 
     <div hidden class="forms">
       <form id="category-add" action="/categories/new" method="POST">

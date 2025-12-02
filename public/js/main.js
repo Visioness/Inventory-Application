@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Dialog elements
   const deleteDialog = document.getElementById('delete-dialog');
   const dialogPasswordInput = document.getElementById('dialog-password-input');
-  const dialogErrorMsg = document.getElementById('dialog-error-msg');
   const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
 
   // Form elements
@@ -88,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const descriptionDisplay = item.querySelector('.description');
     const priceDisplay = item.querySelector('.price');
     const editContainer = item.querySelector('.edit-container');
-    const editBtn = item.querySelector('.btn-edit');
+    const actionsContainer = item.querySelector('.actions');
     const nameInput = item.querySelector('.inline-edit-input');
 
     nameDisplay.hidden = true;
@@ -96,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (priceDisplay) priceDisplay.hidden = true;
 
     editContainer.hidden = false;
-    editBtn.hidden = true;
+    if (actionsContainer) actionsContainer.hidden = true;
     nameInput.focus();
   }
 
@@ -149,14 +148,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const descriptionDisplay = item.querySelector('.description');
       const priceDisplay = item.querySelector('.price');
       const editContainer = item.querySelector('.edit-container');
-      const editBtn = item.querySelector('.btn-edit');
+      const actionsContainer = item.querySelector('.actions');
 
       nameDisplay.hidden = false;
       if (descriptionDisplay) descriptionDisplay.hidden = false;
       if (priceDisplay) priceDisplay.hidden = false;
 
       editContainer.hidden = true;
-      editBtn.hidden = false;
+      if (actionsContainer) actionsContainer.hidden = false;
     }
   }
 
