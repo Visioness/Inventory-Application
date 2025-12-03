@@ -8,7 +8,7 @@ const pool = new Pool(
     ? {
         connectionString: DATABASE_URL,
         ssl: {
-          rejectUnauthorized: false,
+          require: true,
         },
       }
     : {
@@ -18,21 +18,9 @@ const pool = new Pool(
         user: DB_USER,
         password: DB_PASSWORD,
         ssl: {
-          rejectUnauthorized: false,
+          require: true,
         },
       }
 );
-
-async function getPgVersion() {
-  const client = await pool.connect();
-  try {
-    const result = await client.query('SELECT version()');
-    console.log(result.rows[0]);
-  } finally {
-    client.release();
-  }
-}
-
-getPgVersion();
 
 module.exports = pool;
